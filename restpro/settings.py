@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-=z__39!w$svv_9_77_20qgk*6wrvr%w)t%e(vz%(&t*(ic^6sn
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+# '127.0.0.1', 'localhost'
 
 # Application definition
 
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -71,6 +72,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'restpro.wsgi.application'
 
+#this is for JWT
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+# this is for session authentication 
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#         'rest_framework.authentication.BasicAuthentication',
+#         'rest_framework.authentication.SessionAuthentication',
+#     ]
+# }
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
