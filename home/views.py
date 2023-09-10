@@ -17,6 +17,8 @@ from .serializer import *
     
 #     return Response({'status' : 200, 'payload': serializer.data})
 
+# from rest_framework_simplejwt.tokens import RefreshToken
+
 class RegisterUser(APIView):
     def post(self, request):
         serializer = UserSerializer(data = request.data)
@@ -28,17 +30,24 @@ class RegisterUser(APIView):
         serializer.save()
     
         user = User.objects.get(username = serializer.data['username'])    
-        token_obj , _ = Token.objects.get_or_create(user=user)
+        token_obj , _ = Token.objects.get_or_create(user=user) # for session authentication
+        # refresh = RefreshToken.for_user(user)  # for jwt
         
-        return Response({'status': 200, 'payload': serializer.data, 'token': str(token_obj), 'message': 'your data is submited !!'})
+        return Response({'status': 200,
+        'payload': serializer.data,
+        'token': str(token_obj),
+        'message': 'your data is submited !!'})
+        # 'token': str(token_obj), 'refresh': str(refresh),
+        # 'access': str(refresh.access_token),
 
 
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 #same from drf docum.
 
 class StudentAPI(APIView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     # permissions import kari h django restframework documentation
     
