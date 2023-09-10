@@ -4,11 +4,28 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
+from rest_framework import generics
 
 from .models import *
 from .serializer import *
 
 # Create your views here.
+
+#generic views to handl curd operations automatically
+
+class StudentGeneric(generics.ListAPIView, generics.CreateAPIView):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+    
+class StudentGeneric1(generics.UpdateAPIView, generics.DestroyAPIView):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+    lookup_field = 'id'  # to handle urls id
+
+
+
+
+
 
 # @api_view(['GET'])
 # def get_book(request):
@@ -19,89 +36,89 @@ from .serializer import *
 
 # from rest_framework_simplejwt.tokens import RefreshToken
 
-class RegisterUser(APIView):
-    def post(self, request):
-        serializer = UserSerializer(data = request.data)
+# class RegisterUser(APIView):
+#     def post(self, request):
+#         serializer = UserSerializer(data = request.data)
         
-        if not serializer.is_valid():
-            print(serializer.errors)
-            return Response({'status': 403, 'error': serializer.errors , 'message': 'some error in information.'})
+#         if not serializer.is_valid():
+#             print(serializer.errors)
+#             return Response({'status': 403, 'error': serializer.errors , 'message': 'some error in information.'})
     
-        serializer.save()
+#         serializer.save()
     
-        user = User.objects.get(username = serializer.data['username'])    
-        token_obj , _ = Token.objects.get_or_create(user=user) # for session authentication
-        # refresh = RefreshToken.for_user(user)  # for jwt
+#         user = User.objects.get(username = serializer.data['username'])    
+#         # token_obj , _ = Token.objects.get_or_create(user=user) # for session authentication
+#         refresh = RefreshToken.for_user(user)  # for jwt
         
-        return Response({'status': 200,
-        'payload': serializer.data,
-        'token': str(token_obj),
-        'message': 'your data is submited !!'})
-        # 'token': str(token_obj), 'refresh': str(refresh),
-        # 'access': str(refresh.access_token),
+#         return Response({'status': 200,
+#         'payload': serializer.data,
+#         'refresh': str(refresh),
+#         'access': str(refresh.access_token),
+#         'message': 'your data is submited !!'})
+#         # 'token': str(token_obj), 
 
 
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.authentication import JWTAuthentication
-#same from drf docum.
+# from rest_framework.authentication import TokenAuthentication
+# from rest_framework.permissions import IsAuthenticated
+# from rest_framework_simplejwt.authentication import JWTAuthentication
+# #same from drf docum.
 
-class StudentAPI(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    # permissions import kari h django restframework documentation
+# class StudentAPI(APIView):
+#     authentication_classes = [JWTAuthentication]
+#     permission_classes = [IsAuthenticated]
+#     # permissions import kari h django restframework documentation
     
-    def get(self, request):
-        student_objs = Student.objects.all()
-        serializer = StudentSerializer(student_objs, many= True)
-        print(request.user)
+#     def get(self, request):
+#         student_objs = Student.objects.all()
+#         serializer = StudentSerializer(student_objs, many= True)
+#         print(request.user)
         
-        return Response({'status':200, 'payload': serializer.data})
+#         return Response({'status':200, 'payload': serializer.data})
     
-    def post(self, request):
-            data = request.data
-            serializer = StudentSerializer(data = request.data)
+#     def post(self, request):
+#             data = request.data
+#             serializer = StudentSerializer(data = request.data)
     
     
-            if not serializer.is_valid():
-                print(serializer.errors)
-                return Response({'status': 403, 'error': serializer.errors , 'message': 'some error in information.'})
+#             if not serializer.is_valid():
+#                 print(serializer.errors)
+#                 return Response({'status': 403, 'error': serializer.errors , 'message': 'some error in information.'})
     
-            serializer.save()
+#             serializer.save()
     
-            return Response({'status': 200, 'payload': serializer.data, 'message': 'your data is submited !!'})
+#             return Response({'status': 200, 'payload': serializer.data, 'message': 'your data is submited !!'})
 
-    def put(self, request):
-        pass
+#     def put(self, request):
+#         pass
     
-    def patch(self, request):
-        try:
-            student_obj = Student.objects.get (id = request.data['id'])
+#     def patch(self, request):
+#         try:
+#             student_obj = Student.objects.get (id = request.data['id'])
             
-            serializer = StudentSerializer(student_obj, data = request.data, partial = True)
+#             serializer = StudentSerializer(student_obj, data = request.data, partial = True)
             
-            if not serializer.is_valid():
-                print(serializer.errors)
-                return Response({'status': 403, 'error': serializer.errors, 'message': 'some error in information..'})
+#             if not serializer.is_valid():
+#                 print(serializer.errors)
+#                 return Response({'status': 403, 'error': serializer.errors, 'message': 'some error in information..'})
             
-            serializer.save()
+#             serializer.save()
 
-            return Response({'status': 200, 'payload': serializer.data, 'message': 'your data is submited !!'})
+#             return Response({'status': 200, 'payload': serializer.data, 'message': 'your data is submited !!'})
     
-        except Exception as e:
-            print(e)
-            return Response({'status': 403, 'message': 'invalid id'})
+#         except Exception as e:
+#             print(e)
+#             return Response({'status': 403, 'message': 'invalid id'})
     
-    def delete(self, request):        
-        try:
-            # id= request.GET.get('id')   isme aage def() se id hatana pdega and /?id=3 pass kar sakte hai thunderclient mai 
-            student_obj = Student.objects.get(id = id)
-            student_obj.delete()
-            return Response({'status':200, 'message': 'Deleted !!' })
+#     def delete(self, request):        
+#         try:
+#             # id= request.GET.get('id')   isme aage def() se id hatana pdega and /?id=3 pass kar sakte hai thunderclient mai 
+#             student_obj = Student.objects.get(id = id)
+#             student_obj.delete()
+#             return Response({'status':200, 'message': 'Deleted !!' })
     
-        except Exception as e:
-            print(e)
-            return Response({'status': 403, 'message': 'invalid id'})
+#         except Exception as e:
+#             print(e)
+#             return Response({'status': 403, 'message': 'invalid id'})
     
 
 
