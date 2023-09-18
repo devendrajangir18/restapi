@@ -6,8 +6,12 @@ urlpatterns = [
         #path('student/', StudentAPI.as_view()),
         #path('register/', RegisterUser.as_view()),
         
+        path('pdf/', GeneratePdf.as_view()),
+              
         path('generic_student/', StudentGeneric.as_view()),
         path('generic_student/<id>/', StudentGeneric1.as_view()),
+        
+  
         
         # path('get-book'/, get_book),
         # path('', home),

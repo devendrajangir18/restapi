@@ -8,6 +8,9 @@ from rest_framework import generics
 
 from .models import *
 from .serializer import *
+from datetime import date
+from .helpers import * #(koi new file banao and uske functions ko dusre mai use karo to use import kar lena varna 
+# name not define ka error aayega)
 
 # Create your views here.
 
@@ -21,8 +24,24 @@ class StudentGeneric1(generics.UpdateAPIView, generics.DestroyAPIView):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
     lookup_field = 'id'  # to handle urls id
+    
+    
 
-
+class GeneratePdf(APIView):
+    def get(self, request):
+        student_objs = Student.objects.all()
+        params = {
+            'today' : date.today(),
+            'student_objs' : student_objs
+        } 
+        
+        file_name , status = save_pdf(params)     
+        
+        if not status:
+            return Response({'status' : 400})
+        
+        
+        return Response({'status' : 200, 'path' : f'/media/{file_name}.pdf'})
 
 
 
